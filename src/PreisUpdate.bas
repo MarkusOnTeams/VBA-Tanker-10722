@@ -1,16 +1,18 @@
 Attribute VB_Name = "PreisUpdate"
 Option Explicit
+    
+Private SourceSheet As Worksheet
+'
 
 Sub PreisUpdateAusAndererMappe()
     Dim TargetSheet As Worksheet
-    Dim SourceSheet As Worksheet
     
     Set TargetSheet = getTarget
     If TargetSheet Is Nothing Then GoTo SubExit
     Set SourceSheet = getSource
     If SourceSheet Is Nothing Then GoTo SubExit
     
-    UpdatePrice TargetSheet, SourceSheet
+    UpdatePrice TargetSheet
     SortSheet TargetSheet
     CloseSourceBySheet SourceSheet
     
@@ -19,11 +21,10 @@ SubExit:
 
 End Sub
 
-Private Sub UpdatePrice(TargetSheet As Worksheet, SourceSheet As Worksheet)
+Private Sub UpdatePrice(TargetSheet As Worksheet)
     Const StartRow = 2
     Dim LastRow As Long
     Dim ActualRow As Long
-    Dim NextRow As Long
     
     Dim rngTreffer As Range
     
@@ -35,13 +36,9 @@ Private Sub UpdatePrice(TargetSheet As Worksheet, SourceSheet As Worksheet)
         Set rngTreffer = TargetSheet.Range("A:A").Find _
             (what:=SourceSheet.Range("A" & ActualRow).Value, lookat:=xlWhole)
         If rngTreffer Is Nothing Then
-            NextRow = getLastRow(TargetSheet) + 1
-            TargetSheet.Range("A" & NextRow).Value = SourceSheet.Range("A" & ActualRow).Value
-            TargetSheet.Range("B" & NextRow).Value = SourceSheet.Range("B" & ActualRow).Value
-            TargetSheet.Range("A" & NextRow).Interior.ColorIndex = 6
+            AddValue TargetSheet
         Else
-            rngTreffer.Offset(0, 1).Value = SourceSheet.Range("B" & ActualRow).Value
-            rngTreffer.Offset(0, 1).BorderAround ColorIndex:=4
+            UpdateValue rngTreffer, ActualRow
         End If
 
     Next ActualRow
@@ -50,6 +47,20 @@ Private Sub UpdatePrice(TargetSheet As Worksheet, SourceSheet As Worksheet)
 SubExit:
     AppFunktions True
     
+End Sub
+
+Private Sub AddValue(TargetSheet As Worksheet)
+    Dim NextRow As Long
+    
+    NextRow = getLastRow(TargetSheet) + 1
+    TargetSheet.Range("A" & NextRow).Value = SourceSheet.Range("A" & ActualRow).Value
+    TargetSheet.Range("B" & NextRow).Value = SourceSheet.Range("B" & ActualRow).Value
+    TargetSheet.Range("A" & NextRow).Interior.ColorIndex = 6
+End Sub
+
+Private Sub UpdateValue(TargetRange As Range, UpdateRow As Long)
+    TargetRange.Offset(0, 1).Value = SourceSheet.Range("B" & UpdateRow).Value
+    TargetRange.Offset(0, 1).BorderAround ColorIndex:=4
 End Sub
 
 Private Sub CloseSourceBySheet(SourceSheet As Worksheet)
