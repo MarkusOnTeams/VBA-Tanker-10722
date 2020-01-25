@@ -66,7 +66,7 @@ End Sub
 
 Private Sub UpdateValue(TargetRange As Range, UpdateRow As Long)
     TargetRange.Offset(0, 1).Value = SourceSheet.Range("B" & UpdateRow).Value
-    TargetRange.Offset(0, 1).BorderAround ColorIndex:=4
+    TargetRange.Offset(0, 1).Interior.ColorIndex = 4
 End Sub
 
 Private Sub CloseSourceBySheet(SourceSheet As Worksheet)
