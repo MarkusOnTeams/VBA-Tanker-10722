@@ -2,40 +2,50 @@ Attribute VB_Name = "PreisUpdate"
 Option Explicit
 
 Sub PreisUpdateAusAndererMappe()
-    Const StartRow = 2
-    Dim LastRow As Long
     Dim TargetSheet As Worksheet
     Dim SourceSheet As Worksheet
     
-    Dim lngZeile As Long
+    Set TargetSheet = getTarget
+    If TargetSheet Is Nothing Then GoTo SubExit
+    Set SourceSheet = getSource
+    If SourceSheet Is Nothing Then GoTo SubExit
+    
+    UpdatePrice getTarget, getSource
+    SortSheet TargetSheet
+    SourceSheet.Parent.Close savechanges:=False
+
+SubExit:
+
+End Sub
+
+Private Sub UpdatePrice(TargetSheet As Worksheet, SourceSheet As Worksheet)
+    Const StartRow = 2
+    Dim LastRow As Long
+    Dim actualRow As Long
+    
     Dim rngTreffer As Range
     Dim lngZeileFrei As Long
     
     AppFunktions False
     
-    Set TargetSheet = getTarget:     If TargetSheet Is Nothing Then GoTo SubExit
-    Set SourceSheet = getSource:     If SourceSheet Is Nothing Then GoTo SubExit
     LastRow = getLastRow(SourceSheet)
-
-    For lngZeile = StartRow To LastRow
+    For actualRow = StartRow To LastRow
 
         Set rngTreffer = TargetSheet.Range("A:A").Find _
-            (what:=SourceSheet.Range("A" & lngZeile).Value, lookat:=xlWhole)
+            (what:=SourceSheet.Range("A" & actualRow).Value, lookat:=xlWhole)
         If rngTreffer Is Nothing Then
             lngZeileFrei = TargetSheet.Range("A" & _
                 TargetSheet.Rows.Count).End(xlUp).Row + 1
-            TargetSheet.Range("A" & lngZeileFrei).Value = SourceSheet.Range("A" & lngZeile).Value
-            TargetSheet.Range("B" & lngZeileFrei).Value = SourceSheet.Range("B" & lngZeile).Value
+            TargetSheet.Range("A" & lngZeileFrei).Value = SourceSheet.Range("A" & actualRow).Value
+            TargetSheet.Range("B" & lngZeileFrei).Value = SourceSheet.Range("B" & actualRow).Value
             TargetSheet.Range("A" & lngZeileFrei).Interior.ColorIndex = 6
         Else
-            rngTreffer.Offset(0, 1).Value = SourceSheet.Range("B" & lngZeile).Value
+            rngTreffer.Offset(0, 1).Value = SourceSheet.Range("B" & actualRow).Value
             rngTreffer.Offset(0, 1).BorderAround ColorIndex:=4
         End If
 
-    Next lngZeile
+    Next actualRow
     
-    SortSheet TargetSheet
-    SourceSheet.Parent.Close savechanges:=False
  
 SubExit:
     AppFunktions True
@@ -87,6 +97,7 @@ Private Sub AppFunktions(TurnOn As Boolean)
     End If
     
 End Sub
+
 
 
 
