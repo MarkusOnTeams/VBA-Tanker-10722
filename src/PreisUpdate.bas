@@ -12,10 +12,15 @@ Sub PreisUpdateAusAndererMappe()
     
     UpdatePrice getTarget, getSource
     SortSheet TargetSheet
-    SourceSheet.Parent.Close savechanges:=False
+    CloseSourceBySheet SourceSheet
+    
 
 SubExit:
 
+End Sub
+
+Private Sub CloseSourceBySheet(SourceSheet As Worksheet)
+    SourceSheet.Parent.Close savechanges:=False
 End Sub
 
 Private Sub UpdatePrice(TargetSheet As Worksheet, SourceSheet As Worksheet)
