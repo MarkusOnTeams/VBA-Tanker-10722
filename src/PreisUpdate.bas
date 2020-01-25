@@ -12,7 +12,7 @@ Sub PreisUpdateAusAndererMappe()
     Set SourceSheet = getSource
     If SourceSheet Is Nothing Then GoTo SubExit
     
-    UpdatePrice TargetSheet
+    UpdatePriceTable TargetSheet
     SortSheet TargetSheet
     CloseSourceBySheet SourceSheet
     
@@ -21,7 +21,7 @@ SubExit:
 
 End Sub
 
-Private Sub UpdatePrice(TargetSheet As Worksheet)
+Private Sub UpdatePriceTable(TargetSheet As Worksheet)
     Const StartRow = 2
     Dim LastRow As Long
     Dim ActualRow As Long
@@ -33,10 +33,9 @@ Private Sub UpdatePrice(TargetSheet As Worksheet)
     LastRow = getLastRow(SourceSheet)
     For ActualRow = StartRow To LastRow
 
-        Set rngTreffer = TargetSheet.Range("A:A").Find _
-            (what:=SourceSheet.Range("A" & ActualRow).Value, lookat:=xlWhole)
+        Set rngTreffer = FindNextValue(TargetSheet, ActualRow)
         If rngTreffer Is Nothing Then
-            AddValue TargetSheet
+            AddValue TargetSheet, ActualRow
         Else
             UpdateValue rngTreffer, ActualRow
         End If
@@ -49,12 +48,19 @@ SubExit:
     
 End Sub
 
-Private Sub AddValue(TargetSheet As Worksheet)
+Private Function FindNextValue(TargetSheet As Worksheet, ActualRow As Long) As Range
+    Set FindNextValue = TargetSheet.Range("A:A").Find _
+            (what:=SourceSheet.Range("A" & ActualRow).Value, _
+            lookat:=xlWhole)
+End Function
+
+Private Sub AddValue(TargetSheet As Worksheet, ActualRow As Long)
     Dim NextRow As Long
     
     NextRow = getLastRow(TargetSheet) + 1
     TargetSheet.Range("A" & NextRow).Value = SourceSheet.Range("A" & ActualRow).Value
     TargetSheet.Range("B" & NextRow).Value = SourceSheet.Range("B" & ActualRow).Value
+    
     TargetSheet.Range("A" & NextRow).Interior.ColorIndex = 6
 End Sub
 
