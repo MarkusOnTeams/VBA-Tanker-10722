@@ -19,42 +19,41 @@ SubExit:
 
 End Sub
 
-Private Sub CloseSourceBySheet(SourceSheet As Worksheet)
-    SourceSheet.Parent.Close savechanges:=False
-End Sub
-
 Private Sub UpdatePrice(TargetSheet As Worksheet, SourceSheet As Worksheet)
     Const StartRow = 2
     Dim LastRow As Long
-    Dim actualRow As Long
+    Dim ActualRow As Long
+    Dim NextRow As Long
     
     Dim rngTreffer As Range
-    Dim lngZeileFrei As Long
     
     AppFunktions False
     
     LastRow = getLastRow(SourceSheet)
-    For actualRow = StartRow To LastRow
+    For ActualRow = StartRow To LastRow
 
         Set rngTreffer = TargetSheet.Range("A:A").Find _
-            (what:=SourceSheet.Range("A" & actualRow).Value, lookat:=xlWhole)
+            (what:=SourceSheet.Range("A" & ActualRow).Value, lookat:=xlWhole)
         If rngTreffer Is Nothing Then
-            lngZeileFrei = TargetSheet.Range("A" & _
-                TargetSheet.Rows.Count).End(xlUp).Row + 1
-            TargetSheet.Range("A" & lngZeileFrei).Value = SourceSheet.Range("A" & actualRow).Value
-            TargetSheet.Range("B" & lngZeileFrei).Value = SourceSheet.Range("B" & actualRow).Value
-            TargetSheet.Range("A" & lngZeileFrei).Interior.ColorIndex = 6
+            NextRow = getLastRow(TargetSheet) + 1
+            TargetSheet.Range("A" & NextRow).Value = SourceSheet.Range("A" & ActualRow).Value
+            TargetSheet.Range("B" & NextRow).Value = SourceSheet.Range("B" & ActualRow).Value
+            TargetSheet.Range("A" & NextRow).Interior.ColorIndex = 6
         Else
-            rngTreffer.Offset(0, 1).Value = SourceSheet.Range("B" & actualRow).Value
+            rngTreffer.Offset(0, 1).Value = SourceSheet.Range("B" & ActualRow).Value
             rngTreffer.Offset(0, 1).BorderAround ColorIndex:=4
         End If
 
-    Next actualRow
+    Next ActualRow
     
  
 SubExit:
     AppFunktions True
     
+End Sub
+
+Private Sub CloseSourceBySheet(SourceSheet As Worksheet)
+    SourceSheet.Parent.Close savechanges:=False
 End Sub
 
 Private Sub SortSheet(TargetSheet As Worksheet)
@@ -102,6 +101,7 @@ Private Sub AppFunktions(TurnOn As Boolean)
     End If
     
 End Sub
+
 
 
 
