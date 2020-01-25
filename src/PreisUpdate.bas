@@ -13,10 +13,8 @@ Sub PreisUpdateAusAndererMappe()
     
     AppFunktions False
     
-    Set TargetSheet = tbl_Bestand
-    Set SourceSheet = getSource
-    If SourceSheet Is Nothing Then GoTo SubExit
-
+    Set TargetSheet = getTarget:     If TargetSheet Is Nothing Then GoTo SubExit
+    Set SourceSheet = getSource:     If SourceSheet Is Nothing Then GoTo SubExit
     LastRow = getLastRow(SourceSheet)
 
     For lngZeile = StartRow To LastRow
@@ -35,15 +33,27 @@ Sub PreisUpdateAusAndererMappe()
         End If
 
     Next lngZeile
-    TargetSheet.Range("A:D").Sort Key1:=TargetSheet.Range("A1"), _
-        order1:=xlAscending, Header:=xlYes
-
+    
+    SortSheet TargetSheet
     SourceSheet.Parent.Close savechanges:=False
  
 SubExit:
     AppFunktions True
     
 End Sub
+
+Private Sub SortSheet(TargetSheet As Worksheet)
+        
+        TargetSheet.Range("A:D").Sort _
+                Key1:=TargetSheet.Range("A1"), _
+                order1:=xlAscending, _
+                Header:=xlYes
+
+End Sub
+
+Private Function getTarget() As Worksheet
+    Set getTarget = tbl_Bestand
+End Function
 
 Private Function getSource() As Worksheet
     Dim result As Worksheet
