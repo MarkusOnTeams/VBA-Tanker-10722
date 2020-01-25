@@ -10,7 +10,7 @@ Sub PreisUpdateAusAndererMappe()
     Set SourceSheet = getSource
     If SourceSheet Is Nothing Then GoTo SubExit
     
-    UpdatePrice getTarget, getSource
+    UpdatePrice TargetSheet, SourceSheet
     SortSheet TargetSheet
     CloseSourceBySheet SourceSheet
     
