@@ -11,14 +11,13 @@ Sub PreisUpdateAusAndererMappe()
     Dim rngTreffer As Range
     Dim lngZeileFrei As Long
     
-    Application.ScreenUpdating = False
-    Application.DisplayAlerts = False
- 
+    AppFunktions False
+    
     Set TargetSheet = tbl_Bestand
     Set SourceSheet = getSource
     If SourceSheet Is Nothing Then GoTo SubExit
 
-    LastRow = SourceSheet.Range("A" & SourceSheet.Rows.Count).End(xlUp).Row
+    LastRow = getLastRow(SourceSheet)
 
     For lngZeile = StartRow To LastRow
 
@@ -42,8 +41,7 @@ Sub PreisUpdateAusAndererMappe()
     SourceSheet.Parent.Close savechanges:=False
  
 SubExit:
-    Application.DisplayAlerts = True
-    Application.ScreenUpdating = True
+    AppFunktions True
     
 End Sub
 
@@ -64,7 +62,21 @@ ErrorExit:
     Resume FuncExit
 End Function
 
+Private Function getLastRow(SourceSheet As Worksheet) As Long
+    getLastRow = SourceSheet.Range("A" & SourceSheet.Rows.Count).End(xlUp).Row
+End Function
 
+Private Sub AppFunktions(TurnOn As Boolean)
+
+    Application.ScreenUpdating = TurnOn
+    Application.DisplayAlerts = TurnOn
+    If TurnOn Then
+        Application.Calculation = xlCalculationAutomatic
+    Else
+        Application.Calculation = xlCalculationManual
+    End If
+    
+End Sub
 
 
 
